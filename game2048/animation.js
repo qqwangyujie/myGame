@@ -1,12 +1,12 @@
 
-//Éú³ÉËæ»úÊı×ÖµÄ¶¯»­
+//ç”Ÿæˆéšæœºæ•°å­—çš„åŠ¨ç”»
 function showNumAnimation(x, y, num) {
     var number = $('#number-' + x + '-' + y);
     number.css({
         backgroundColor: getNumBackground(num),
         color: getNumBackColor(num)
     });
-    number.text(num);
+    number.text(getNumText(num));
     number.animate({
         width: 100,
         height: 100,
@@ -22,4 +22,7 @@ function moveAnimation(fromX,fromY,toX,toY){
         left: 20 + toY * 20 + toY * 100
 
     },200)
+}
+function updateScore(){
+    $('#score').text(score)
 }
