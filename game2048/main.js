@@ -1,6 +1,33 @@
 $(window).ready(function () {
     newGame.init();
 });
+//游戏基本设置
+    var boxHeight;
+    var cellMargin;
+    var cellWidht; 
+    var cellHeight;
+
+    var touchStartX = 0;
+    var touchStartY = 0;
+    var touchEndx = 0;
+    var touchEndY = 0;
+
+    // 手机端 (完成)
+    if($(document).width()<500){
+         console.log('mobile')
+         boxHeight = $('#box').css('height',$(this).width());   
+         cellMargin = $('.cell').width()/5;
+         cellWidht  = $('.cell').width()+1;
+         cellHeight = $('.cell').height()+1;
+    }
+    // pc端 (未完成)
+    else{
+        console.log('pc')
+         boxHeight  = 500;
+         cellMargin = 20;
+         cellWidht  = 100;
+         cellHeight = 100;    
+    }
 //存放数据
 var board = [];
 //分数
@@ -17,14 +44,13 @@ var newGame = {
         boardView();
     }
 };
-
 //计算位置每个格子所在的位置
 function calculation() {
     for (var i = 0; i < 4; i++) {
         for (var j = 0; j < 4; j++) {
             $('#cell' + '-' + i + '-' + j).css({
-                top: 20 + i * 20 + i * 100,
-                left: 20 + j * 20 + j * 100
+                top: cellMargin + i * cellMargin + i * cellWidht,
+                left: cellMargin + j * cellMargin + j * cellWidht
             });
         }
     }
@@ -43,8 +69,8 @@ function boardView() {
             $('#box').append('<div class="number" id="number-' + i + '-' + j + '"></div>')
             var num = $('#number-' + i + '-' + j);
             num.css({
-                top: 20 + i * 20 + i * 100,
-                left: 20 + j * 20 + j * 100
+                top: cellMargin + i * cellMargin + i * cellWidht,
+                left: cellMargin + j * cellMargin + j * cellWidht
             });
             if (board[i][j] == 0) {
                 num.css({
@@ -54,10 +80,11 @@ function boardView() {
             }
             else {
                 num.css({
-                    width: 100,
-                    height: 100,
+                    width: cellWidht,
+                    height: cellHeight,
                     backgroundColor: getNumBackground(board[i][j]),
-                    color: getNumBackColor(board[i][j])
+                    color: getNumBackColor(board[i][j]),
+                    lineHeight:cellHeight+'px'
                 });
                 num.text(getNumText(board[i][j]))
             }
@@ -135,7 +162,56 @@ $(document).keydown(function (event) {
             return false;
     }
 });
+//手机操作
+document.addEventListener('touchstart',function(e){
+    touchStartX = e.touches[0].pageX;
+    touchStartY = e.touches[0].pageY;
+});
+document.addEventListener('touchend',function(e){
+    touchEndX = e.changedTouches[0].pageX;
+    touchEndY = e.changedTouches[0].pageY;
 
+    var dex = touchEndX - touchStartX;
+    var dey = touchEndY - touchStartY;
+    //x
+    if(Math.abs(dex)>=Math.abs(dey)){
+       if(dex>0){
+        //右
+           if (move.moveRight()) {
+               getRandomNum();
+           }
+           isGameOver();
+
+       }
+        else{
+        //左
+           if (move.moveLeft()) {
+               getRandomNum();
+
+           }
+           isGameOver();
+       }
+    }
+    //y
+    else{
+        if(dey>0){
+            //下
+            if (move.moveDown()) {
+                getRandomNum();
+            }
+            isGameOver();
+        }
+        else{
+            //上
+            if (move.moveUp()) {
+                getRandomNum();
+            }
+            isGameOver();
+        }
+    }
+
+
+});
 /*
  *上下左右移动操作
  *  1. canMove 判断是否能够移动  (return true/false)
@@ -338,7 +414,6 @@ var move = {
             }
             return true;
         }
-
     }
 };
 /*
